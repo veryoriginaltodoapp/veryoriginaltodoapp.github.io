@@ -1,5 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import actions from '../actions';
 
 class Logo extends React.Component {
 
@@ -16,9 +17,7 @@ class Logo extends React.Component {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		onClick: function() {
-			dispatch({type: 'DISPLAY_HOMEPAGE'});
-		}
+		onClick: () => dispatch(actions.displayHomepage())
 	};
 }
 

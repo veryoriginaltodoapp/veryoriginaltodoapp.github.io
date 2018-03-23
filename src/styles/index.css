@@ -243,6 +243,7 @@ button {
 }
 
 .list-elem {
+	position: relative;
 	display: inline-block;
 	width: 250px;
 	margin: 0 20px 20px 20px;
@@ -250,6 +251,12 @@ button {
 	vertical-align: top;
 	text-align: center;
 	padding: 0 8px;
+	transition: box-shadow .4s, transform .4s;
+}
+
+.list-elem.hovered {
+	box-shadow: 0 6px 10px 3px #595959;
+	transform: scale(1.02);
 }
 
 .list-elem__title {
@@ -292,6 +299,15 @@ button {
 	font-size: 2.2rem;
 	color: #595959;
 	cursor: pointer;
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	transition: .5s;
+}
+
+.todo-elem__checkbox:hover {
+	box-shadow: 0 0px 10px 2px #595959;
 }
 
 .todo-elem.checked .todo-elem__title,

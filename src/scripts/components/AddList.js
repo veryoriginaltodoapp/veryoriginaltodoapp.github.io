@@ -1,5 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import actions from '../actions';
 
 class AddList extends React.Component {
 	constructor(props) {
@@ -13,6 +14,7 @@ class AddList extends React.Component {
 		if (value === '') return;
 		this.input.value = '';
 		this.props.createList(value, this.props.boardId);
+		this.input.focus();
 	}
 
 	render() {
@@ -36,7 +38,6 @@ class AddList extends React.Component {
 							className="list-creator__input"
 							placeholder="add a list"
 							ref={(input) => this.input = input} />
-					<input type="submit" />
 				</form>
 			</li>
 		);
@@ -53,21 +54,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		startCreatingList: function() {
-			dispatch({type: 'START_CREATING_LIST'});
-		},
-
-		closeListCreator: function() {
-			dispatch({type: 'CLOSE_LIST_CREATOR'});
-		},
-
-		createList: function(name, boardId) {
-			dispatch({
-				type: 'CREATE_LIST',
-				boardId,
-				name
-			});
-		}
+		startCreatingList: () => dispatch(actions.startCreatingList()),
+		closeListCreator: () => dispatch(actions.closeListCreator()),
+		createList: (name, boardId) => dispatch(actions.createList(name, boardId))
 	};
 }
 

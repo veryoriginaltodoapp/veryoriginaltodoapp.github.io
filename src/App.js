@@ -4,6 +4,8 @@ import DisplayBoards from './scripts/components/DisplayBoards';
 import DisplayLists from './scripts/components/DisplayLists';
 import ClearLocalStorage from './scripts/components/ClearLocalStorage';
 import {connect} from 'react-redux';
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 
 class App extends Component {
   render() {
@@ -25,6 +27,7 @@ function mapStateToProps(state) {
   };
 }
 
+App = DragDropContext(HTML5Backend)(App);
 App = connect(mapStateToProps)(App);
 
 export default App;

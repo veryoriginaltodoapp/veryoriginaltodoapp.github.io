@@ -88,7 +88,8 @@ function boards(state = JSON.parse(ls.getItem('boards')) || [], action) {
 
 		case 'CREATE_LIST':
 		case 'CREATE_TODO':
-		case 'TODO_CLICKED':
+		case 'SWITCH_TODO':
+		case 'MOVE_TODO':
 			newState = createNewBoard(state, action);
 			ls.setItem('boards', JSON.stringify(newState));
 			return newState;
@@ -120,9 +121,48 @@ function lists(state = [], action) {
 			return [...state, newList];
 
 		case 'CREATE_TODO':
-		case 'TODO_CLICKED':
-		case 'PREPARE_DRAGGING':
+		case 'SWITCH_TODO':
 			return createNewList(state, action);
+
+		case 'MOVE_TODO':
+			const { item: fromList, index: fromListIndex } = findById(state, action.listId);
+			const { item: toList, index: toListIndex } = findById(state, action.targetListId);
+			const { item: todo, index: todoIndex } = findById(fromList.todos, action.todoId);
+
+			let newFromList, newToList;
+
+			if (action.listId === action.targetListId) {
+				fromList.todos.splice(todoIndex, 1);
+				newFromList = {
+					name: fromList.name,
+					id: fromList.id,
+					todos: [...fromList.todos, todo]
+				}
+
+				return [...state.slice(0, fromListIndex), newFromList, ...state.slice(fromListIndex + 1)];
+			}
+
+			newFromList = {
+				name: fromList.name,
+				id: fromList.id,
+				todos: fromList.todos.filter((todo) => todo.id !== action.todoId)
+			};
+
+			newToList = {
+				name: toList.name,
+				id: toList.id,
+				todos: [...toList.todos, todo]
+			};
+
+			//ls.setItem('idCounter', idCounter);
+
+			newState = [...state];
+			newState.splice(fromListIndex, 1, newFromList);
+			newState.splice(toListIndex, 1, newToList);
+
+			console.log(newState);
+
+			return newState;
 
 		default: 
 			return state;
@@ -133,8 +173,7 @@ function lists(state = [], action) {
 
 function todos(state = [], action) {
 	let newTodo,
-		currentTodo,
-		index;
+		currentTodo;
 
 	switch (action.type) {
 		case 'CREATE_TODO':
@@ -147,41 +186,16 @@ function todos(state = [], action) {
 
 			return [...state, newTodo];
 
-		case 'TODO_CLICKED':
-			({item: currentTodo, index} = findById(todos, action.id));
+		case 'SWITCH_TODO':
+			currentTodo = findById(state, action.id).item;
 			return createNewTodo(state, action.id, !currentTodo.checked, currentTodo.isDragging);
-			// ({item: currentTodo, index} = findById(state, action.id));
-			// newTodo = {
-			// 	name: currentTodo.name,
-			// 	id: idCounter++,
-			// 	checked: !currentTodo.checked,
-			// 	isDragging: false
-			// };
-
-			// ls.setItem('idCounter', idCounter);
-
-			// return [...state.slice(0, index),
-			// 		newTodo,
-			// 		...state.slice(index + 1)];
 
 		case 'START_DRAGGING':
-			({item: currentTodo, index} = findById(state, action.id));
+			currentTodo = findById(state, action.id).item;
 			return createNewTodo(state, action.id, currentTodo.checked, true);
-			// newTodo = {
-			// 	name: currentTodo.name,
-			// 	id: idCounter++,
-			// 	checked: currentTodo.checked,
-			// 	isDragging: true
-			// };
-
-			// ls.setItem('idCounter', idCounter);
-
-			// return [...state.slice(0, index),
-			// 		newTodo,
-			// 		...state.slice(index + 1)];
 
 		case 'FINISH_DRAGGING':
-			({item: currentTodo, index} = findById(state, action.id));
+			currentTodo = findById(state, action.id).item;
 			return createNewTodo(state, action.id, currentTodo.checked, false);
 
 		default:
@@ -218,6 +232,7 @@ function createNewBoard(boards, action) {
 		isDisplaying: true,
 		lists: newLists
 	};
+
 	ls.setItem('idCounter', idCounter);
 
 	return [...boards.slice(0, index),
@@ -258,5 +273,5 @@ function createNewTodo(todos, id, checked, isDragging) {
 }
 
 
-const reducer = combineReducers({ idCounter, displaying, isCreating, boards });
+const reducer = combineReducers({ displaying, isCreating, boards });
 export default reducer;
