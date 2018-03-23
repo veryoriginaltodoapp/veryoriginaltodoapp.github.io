@@ -2,6 +2,7 @@ import React from 'react';
 import DisplayBoardCreator from './DisplayBoardCreator';
 import Board from './Board';
 import {connect} from 'react-redux';
+import actions from '../actions';
 
 class Boards extends React.Component {
 
@@ -27,14 +28,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		handleClick: function(boardId) {
-			dispatch({
-				type: "DISPLAY_BOARD",
-			});
-			dispatch({
-				type: "UPDATE_DISPLAYED_BOARD",
-				boardId
-			});
+		handleClick: (boardId) => {
+			dispatch(actions.displayBoard());
+			dispatch(actions.updateDisplayedBoard(boardId));
 		}
 	};
 }

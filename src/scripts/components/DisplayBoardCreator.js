@@ -1,5 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import actions from '../actions';
 
 
 class BoardCreator extends React.Component {
@@ -64,18 +65,11 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		startCreatingBoard: function() {
-			dispatch({type: 'START_CREATING_BOARD'})
-		},
-		closeBoardCreator: function() {
-			dispatch({type: 'CLOSE_BOARD_CREATOR'})
-		},
-		createBoard: function(name) {
+		startCreatingBoard: () => dispatch(actions.startCreatingBoard()),
+		closeBoardCreator: () => dispatch(actions.closeBoardCreator()),
+		createBoard: (name) => {
 			if (name !== '') {
-				dispatch({
-					type: 'CREATE_BOARD',
-					name
-				});
+				dispatch(actions.createBoard(name));
 			}
 		}
 	}
